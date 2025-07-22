@@ -4,41 +4,60 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    wget \
+    vim \
+    nano \
+    zsh \
     sudo \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Create user first (Claude Code CLI needs to be installed per-user)
-RUN useradd -m -u 1000 -s /bin/bash claudeforge && \
-    echo "claudeforge ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/claudeforge
+# Create developer user
+RUN useradd -m -u 1000 -s /bin/zsh dev && \
+    echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev
 
-# Switch to user for Claude Code installation
-USER claudeforge
-WORKDIR /home/claudeforge
+# Switch to dev user
+USER dev
+WORKDIR /home/dev
 
-# Install Claude Code CLI as the user
+# Install Oh My Zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Install Claude Code CLI
 RUN curl -fsSL https://claude.ai/install.sh | bash && \
-    echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc
+    echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
 
-# Make sure Claude Code is in PATH for this session
-ENV PATH="/home/claudeforge/.local/bin:$PATH"
+# Install GitHub CLI
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+    sudo apt update && \
+    sudo apt install gh -y
 
-# Set working directory and copy application
-WORKDIR /app
-COPY --chown=claudeforge:claudeforge . .
+# Set up Python development environment
+RUN pip install --user --upgrade pip && \
+    pip install --user \
+    black \
+    isort \
+    flake8 \
+    mypy \
+    pytest \
+    ipython \
+    jupyter \
+    requests \
+    pydantic \
+    click \
+    rich
 
-# Install Python dependencies
-RUN pip install --user -e .
+# Create directories
+RUN mkdir -p /home/dev/workspace /home/dev/.config
 
-# Create directories for repos and logs
-RUN mkdir -p /tmp/claudeforge-repos /app/logs
+# Update PATH in both bashrc and zshrc
+RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc && \
+    echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
 
-# Set environment variables
-ENV PYTHONPATH=/app/src
-ENV CLAUDEFORGE_CONFIG=/app/config.yml
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import claudeforge; print('OK')" || exit 1
+# Set working directory
+WORKDIR /home/dev/workspace
 
 # Default command
-CMD ["python", "-m", "claudeforge.cli", "--help"]
+CMD ["/bin/zsh"]

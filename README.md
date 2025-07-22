@@ -1,46 +1,59 @@
-# ClaudeForge
+# Claude Development Container
 
-An autonomous development tool that uses Claude Code CLI to automatically work on GitHub issues and create pull requests.
+A simple, ready-to-use Docker container for development with Claude Code, GitHub CLI, and Python.
 
-## Features
+## What You Get
 
-- **No API Key Required**: Uses your existing Claude subscription via Claude Code CLI
-- Automated Claude Code sessions from GitHub issues
-- Support for Python projects (extensible to other languages)  
-- Notification system (Discord, Email)
-- Docker deployment for VPS hosting
-- Pull request automation
+- **Python 3.11** + common dev packages (pytest, black, jupyter, etc.)
+- **Claude Code CLI** (authenticated)
+- **GitHub CLI** (authenticated)
+- **Zsh + Oh My Zsh** for a nice terminal experience
+- **Development tools** (vim, nano, git)
 
-## How It Works
+## One-Time Setup
 
-ClaudeForge bridges GitHub issues with Claude Code:
-
-1. **Input**: GitHub issue URL + your instruction
-2. **Context Building**: Combines your instruction with issue details and repo context
-3. **Autonomous Development**: Claude Code works independently in the repository
-4. **Result**: Commits changes and creates a pull request automatically
-
-## Quick Start
-
-### Local Installation
 ```bash
-pip install -e .
-claudeforge run --issue-url "https://github.com/user/repo/issues/123" --instruction "Fix the authentication bug"
+./setup.sh
 ```
 
-### Docker (Recommended for VPS)
+This creates two images:
+- `claudeforge-setup` (base image, no auth)
+- `claudeforge` (ready-to-dev with authentication)
+
+## Daily Usage
+
 ```bash
-git clone https://github.com/RMLaroche/ClaudeForge.git
-cd ClaudeForge
-cp .env.example .env
-# Edit .env with your GitHub token
-docker-compose up -d
+docker run -it --rm -v $(pwd):/home/dev/workspace claudeforge
 ```
 
-## Configuration
+Or with docker-compose:
+```bash
+docker-compose run --rm claudeforge
+```
 
-- **No API Key**: Uses Claude Code CLI with your subscription
-- **GitHub Token**: Required for repository access
-- **Notifications**: Optional Discord/Email alerts
+## Example Workflow
 
-See `DOCKER_GUIDE.md` for detailed Docker setup and `config.example.yml` for all options.
+```bash
+# Start authenticated container
+docker run -it --rm -v $(pwd):/home/dev/workspace claudeforge
+
+# Create a project (no auth needed - already logged in!)
+mkdir my-api && cd my-api
+python -m venv venv && source venv/bin/activate
+
+# Use Claude Code for development
+claude-code "Create a FastAPI application with user authentication"
+
+# Push to GitHub
+git init
+gh repo create my-api --public
+git add . && git commit -m "Initial commit"
+git push -u origin main
+```
+
+## Images
+
+- **`claudeforge-setup`**: Base image with tools installed
+- **`claudeforge`**: Ready-to-dev image with authentication baked in
+
+Just use `claudeforge` for development - everything is already authenticated!
