@@ -31,6 +31,27 @@ Or with docker-compose:
 docker-compose run --rm claudeforge
 ```
 
+## Authentication Process
+
+During setup, you'll need to:
+
+1. **Authenticate Claude**:
+   ```bash
+   claude
+   # Follow the configuration wizard
+   # Exit with: /exit
+   ```
+
+2. **Authenticate GitHub**:
+   ```bash
+   gh auth login
+   # Follow the prompts
+   ```
+
+3. **Exit container**: `exit`
+
+💡 **Tip**: If Claude clears the screen, type `help` to see instructions again.
+
 ## Example Workflow
 
 ```bash
@@ -41,8 +62,8 @@ docker run -it --rm -v $(pwd):/home/dev/workspace claudeforge
 mkdir my-api && cd my-api
 python -m venv venv && source venv/bin/activate
 
-# Use Claude Code for development
-claude-code "Create a FastAPI application with user authentication"
+# Use Claude for development
+claude "Create a FastAPI application with user authentication"
 
 # Push to GitHub
 git init
