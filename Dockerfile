@@ -56,6 +56,10 @@ RUN mkdir -p /home/dev/workspace /home/dev/.config
 RUN echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc && \
     echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.zshrc
 
+# Add claudef alias for autonomous Claude
+RUN echo 'alias claudef="claude --dangerously-skip-permissions"' >> ~/.bashrc && \
+    echo 'alias claudef="claude --dangerously-skip-permissions"' >> ~/.zshrc
+
 # Set working directory
 WORKDIR /home/dev/workspace
 
