@@ -6,18 +6,15 @@ import tempfile
 from pathlib import Path
 from typing import Optional, Dict, Any
 
-from anthropic import Anthropic
-
 logger = logging.getLogger(__name__)
 
 
 class ClaudeSession:
     """Manages Claude Code sessions for autonomous development."""
     
-    def __init__(self, api_key: str, model: str = "claude-3-sonnet-20240229"):
-        self.api_key = api_key
-        self.model = model
-        self.client = Anthropic(api_key=api_key)
+    def __init__(self):
+        """Initialize Claude Code session manager."""
+        pass
     
     def create_instruction_prompt(
         self,
@@ -78,26 +75,27 @@ class ClaudeSession:
         """Run a Claude Code session in the given repository."""
         logger.info(f"Starting Claude Code session in {repo_path}")
         
-        # Create a temporary file with the instruction
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
-            f.write(instruction)
-            instruction_file = f.name
-        
         try:
-            # Run claude-code with the instruction file
+            # Run claude-code directly with the instruction
             cmd = [
                 "claude-code",
-                "--non-interactive",
-                "--timeout", str(max_time),
-                "--instruction-file", instruction_file
+                "--",
+                instruction
             ]
+            
+            # Set environment variables for non-interactive mode
+            env = {
+                "CLAUDE_CODE_NON_INTERACTIVE": "1",
+                "CLAUDE_CODE_TIMEOUT": str(max_time)
+            }
             
             result = subprocess.run(
                 cmd,
                 cwd=repo_path,
                 capture_output=True,
                 text=True,
-                timeout=max_time + 60  # Add buffer for cleanup
+                timeout=max_time + 60,  # Add buffer for cleanup
+                env=env
             )
             
             logger.info(f"Claude Code session completed with return code: {result.returncode}")
@@ -114,12 +112,6 @@ class ClaudeSession:
         except Exception as e:
             logger.error(f"Error running Claude Code session: {e}")
             raise
-        finally:
-            # Clean up temporary instruction file
-            try:
-                Path(instruction_file).unlink()
-            except Exception as e:
-                logger.warning(f"Could not delete temporary instruction file: {e}")
     
     def analyze_session_output(self, result: subprocess.CompletedProcess) -> Dict[str, Any]:
         """Analyze the output of a Claude Code session."""

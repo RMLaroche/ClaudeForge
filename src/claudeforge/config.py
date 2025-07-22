@@ -12,9 +12,7 @@ load_dotenv()
 
 
 class ClaudeConfig(BaseModel):
-    api_key: str
-    model: str = "claude-3-sonnet-20240229"
-    max_tokens: int = 4000
+    timeout: int = 3600  # Default session timeout in seconds
 
 
 class GitHubConfig(BaseModel):
@@ -75,8 +73,7 @@ class Config(BaseModel):
         # Override with environment variables
         env_overrides = {
             "claude": {
-                "api_key": os.getenv("ANTHROPIC_API_KEY"),
-                "model": os.getenv("CLAUDE_MODEL"),
+                "timeout": int(os.getenv("CLAUDE_TIMEOUT", "3600")),
             },
             "github": {
                 "token": os.getenv("GITHUB_TOKEN"),

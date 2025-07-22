@@ -9,7 +9,7 @@ services:
       - ./logs:/app/logs
       - /tmp/claudeforge-repos:/tmp/claudeforge-repos
     environment:
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CLAUDE_TIMEOUT=${CLAUDE_TIMEOUT:-3600}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}

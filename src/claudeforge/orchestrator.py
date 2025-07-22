@@ -21,10 +21,7 @@ class ClaudeForgeOrchestrator:
     def __init__(self, config: Config):
         self.config = config
         self.github_client = GitHubClient(config.github.token)
-        self.claude_session = ClaudeSession(
-            config.claude.api_key,
-            config.claude.model
-        )
+        self.claude_session = ClaudeSession()
         self.notification_manager = NotificationManager(config)
         self.current_repo_path: Optional[Path] = None
     
@@ -102,7 +99,7 @@ class ClaudeForgeOrchestrator:
             claude_result = self.claude_session.run_claude_code_session(
                 repo_path,
                 full_instruction,
-                self.config.development.max_session_time
+                self.config.claude.timeout
             )
             
             # Analyze session results
