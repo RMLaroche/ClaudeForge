@@ -50,8 +50,6 @@ During setup, you'll need to:
 
 3. **Exit container**: `exit`
 
-💡 **Tip**: If Claude clears the screen, type `help` to see instructions again.
-
 ## Example Workflow
 
 ```bash
