@@ -1,0 +1,41 @@
+# ClaudeForge Configuration
+
+# Claude API Configuration
+claude:
+  api_key: "your-anthropic-api-key"
+  model: "claude-3-sonnet-20240229"
+  max_tokens: 4000
+
+# GitHub Configuration
+github:
+  token: "your-github-token"
+  default_branch: "main"
+
+# Notification Settings
+notifications:
+  discord:
+    enabled: false
+    webhook_url: "your-discord-webhook-url"
+    bot_token: "your-discord-bot-token"
+    channel_id: "channel-id"
+  
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    username: "your-email@gmail.com"
+    password: "your-app-password"
+    to_email: "recipient@gmail.com"
+
+# Development Settings
+development:
+  clone_dir: "/tmp/claudeforge-repos"
+  max_session_time: 3600  # seconds
+  auto_create_pr: true
+  pr_draft: false
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "claudeforge.log"

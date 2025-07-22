@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  claudeforge:
+    build: .
+    container_name: claudeforge
+    volumes:
+      - ./config.yml:/app/config.yml:ro
+      - ./logs:/app/logs
+      - /tmp/claudeforge-repos:/tmp/claudeforge-repos
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - EMAIL_TO=${EMAIL_TO}
+    restart: unless-stopped
+    command: ["python", "-m", "claudeforge.cli", "daemon"]
+    
+  # Optional: Redis for task queuing (future enhancement)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: claudeforge-redis
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis_data:/data
+  
+# volumes:
+#   redis_data:
