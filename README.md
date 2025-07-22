@@ -9,6 +9,7 @@ A simple, ready-to-use Docker container for development with Claude Code, GitHub
 - **GitHub CLI** (authenticated)
 - **Zsh + Oh My Zsh** for a nice terminal experience
 - **Development tools** (vim, nano, git)
+- **Autonomous Claude alias**: `claudef` (shorthand for `claude --dangerously-skip-permissions`)
 
 ## One-Time Setup
 
@@ -26,7 +27,7 @@ During setup, you'll need to:
 
 1. **Authenticate Claude**:
    ```bash
-   claude
+   claude --dangerously-skip-permissions
    # Follow the configuration wizard
    # Exit with: /exit
    ```
@@ -60,8 +61,8 @@ docker run -it --rm -v $(pwd):/home/dev/workspace claudeforge
 mkdir my-api && cd my-api
 python -m venv venv && source venv/bin/activate
 
-# Use Claude for development
-claude "Create a FastAPI application with user authentication"
+# Use Claude for development (autonomous mode)
+claudef "Create a FastAPI application with user authentication"
 
 # Push to GitHub
 git init
