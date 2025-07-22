@@ -20,18 +20,7 @@ This creates two images:
 - `claudeforge-setup` (base image, no auth)
 - `claudeforge` (ready-to-dev with authentication)
 
-## Daily Usage
-
-```bash
-docker run -it --rm -v $(pwd):/home/dev/workspace claudeforge
-```
-
-Or with docker-compose:
-```bash
-docker-compose run --rm claudeforge
-```
-
-## Authentication Process
+### Authentication Process
 
 During setup, you'll need to:
 
@@ -49,6 +38,17 @@ During setup, you'll need to:
    ```
 
 3. **Exit container**: `exit`
+
+## Daily Usage
+
+```bash
+docker run -it --rm -v $(pwd):/home/dev/workspace claudeforge
+```
+
+Or with docker-compose:
+```bash
+docker-compose run --rm claudeforge
+```
 
 ## Example Workflow
 
